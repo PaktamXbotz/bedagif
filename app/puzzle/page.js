@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Helper: shuffle array
 function shuffle(arr) {
   let a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -12,7 +11,6 @@ function shuffle(arr) {
   return a;
 }
 
-// Check solved
 function isSolved(tiles) {
   for (let i = 0; i < 8; i++) if (tiles[i] !== i + 1) return false;
   return tiles[8] === 0;
@@ -54,23 +52,23 @@ export default function PuzzlePage() {
       <div style={styles.puzzle}>
         {tiles.map((v, i) => (
           <div
-  key={i}
-  style={{
-    ...styles.tile,
-    opacity: v === 0 ? 0 : 1,
-    background: v !== 0 ? `url("/tulips.avif")` : "none",
-    backgroundSize: "300px 300px",
-    backgroundPosition: v !== 0 ?
-      `${-((v - 1) % 3) * 100}px ${-Math.floor((v - 1) / 3) * 100}px`
-      : "none",
-    cursor: solved ? "not-allowed" : v === 0 ? "default" : "pointer"
-  }}
-  onClick={() => move(i)}
->
-  {v !== 0 && (
-    <span style={styles.numHint}>{v}</span>
-  )}
-</div>
+            key={i}
+            style={{
+              ...styles.tile,
+              opacity: v === 0 ? 0 : 1,
+              background: v !== 0 ? `url("/tulips.jpg")` : "none",
+              backgroundSize: "300px 300px",
+              backgroundPosition: v !== 0
+                ? `${-(i % 3) * 100}px ${-Math.floor(i / 3) * 100}px`
+                : "none",
+              cursor: solved ? "not-allowed" : v === 0 ? "default" : "pointer"
+            }}
+            onClick={() => move(i)}
+          >
+            {v !== 0 && (
+              <span style={styles.numHint}>{v}</span>
+            )}
+          </div>
         ))}
       </div>
       {solved && (
