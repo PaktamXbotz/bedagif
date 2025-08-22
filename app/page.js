@@ -14,7 +14,7 @@ export default function Home() {
 
   // Auto play music (public/birthday.mp3)
   useEffect(() => {
-    const audio = new Audio("/birthday.mp3");
+    const audio = new Audio("/cinnamon.mp3");
     audio.play().catch(() => {
       console.log("Autoplay blocked, user must click first.");
     });
@@ -24,7 +24,7 @@ export default function Home() {
     <div className="container">
       <h1>🎉 Happy Birthday! 🎂</h1>
       <p>Semoga panjang umur & murah rezeki ✨</p>
-      <img src="/cake.gif" alt="Birthday Cake" width="200" />
+      <img src="/cakecute.gif" alt="Birthday Cake" width="200" />
       <br />
       <button onClick={launchConfetti}>Celebrate 🎊</button>
     </div>
