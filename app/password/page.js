@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const PIN_LENGTH = 6; // Tukar ikut keperluan
-const CORRECT_PIN = "181106"; // PIN yang betul
+const PIN_LENGTH = 6;
+const CORRECT_PIN = "181106";
 
 export default function PasswordPage() {
   const [pin, setPin] = useState("");
@@ -29,15 +29,15 @@ export default function PasswordPage() {
       if (pin === CORRECT_PIN) {
         setSuccess(true);
         setError("");
-        setOpenLock(true); // Animasi kunci terbuka
+        setOpenLock(true);
         setTimeout(() => {
           router.push("/puzzle");
-        }, 1100); // Bagi animasi lock sempat main (1.1s)
+        }, 1100);
       } else {
         setError("PIN salah, cuba lagi!");
         setShake(true);
         setPin("");
-        setTimeout(() => setShake(false), 500); // Buang animasi shake lepas 0.5s
+        setTimeout(() => setShake(false), 500);
       }
     } else {
       setError("Sila masukkan PIN penuh!");
@@ -56,7 +56,7 @@ export default function PasswordPage() {
             transform: openLock ? "rotate(-20deg) translateY(-20px)" : "none"
           }}
         >
-          {/* SVG padlock animasi */}
+          {/* SVG padlock */}
           {!openLock ? (
             <svg width="44" height="44" viewBox="0 0 44 44">
               <rect x="12" y="20" width="20" height="18" rx="5" fill="#222"/>
