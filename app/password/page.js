@@ -3,17 +3,19 @@ import { useState } from "react";
 
 export default function PasswordPage() {
   const [input, setInput] = useState("");
-  const [error, setError] = useState(false);
-
-  // Tukar password ikut suka
-  const PASSWORD = "happybday";
+  const [state, setState] = useState("idle"); // idle, error, success
+  const PASSWORD = "tulipbday";
 
   function handleSubmit(e) {
     e.preventDefault();
     if (input === PASSWORD) {
-      window.location.href = "/maze";
+      setState("success");
+      setTimeout(() => {
+        window.location.href = "/puzzle";
+      }, 1200);
     } else {
-      setError(true);
+      setState("error");
+      setTimeout(() => setState("idle"), 1200);
     }
   }
 
@@ -22,21 +24,35 @@ export default function PasswordPage() {
       <h1 style={styles.title}>🔒 Birthday Gate</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <input
-          style={{ ...styles.input, borderColor: error ? "#e74c3c" : "#bbb" }}
+          style={{
+            ...styles.input,
+            borderColor: state === "error" ? "#e57373" : "#bbb",
+          }}
           type="password"
           placeholder="Enter the secret code"
           value={input}
           onChange={e => {
             setInput(e.target.value);
-            setError(false);
+            setState("idle");
           }}
           autoFocus
         />
-        <button style={styles.button} type="submit">
+        <button style={styles.button} type="submit" disabled={state === "success"}>
           Unlock
         </button>
       </form>
-      {error && <p style={styles.error}>Wrong password! Try again...</p>}
+      {state === "error" && (
+        <>
+          <img src="/error.gif" alt="error" width={80} style={{ margin: 8 }} />
+          <p style={styles.error}>Salah password! 🐻 Cuba lagi~</p>
+        </>
+      )}
+      {state === "success" && (
+        <>
+          <img src="/success.gif" alt="success" width={80} style={{ margin: 8 }} />
+          <p style={styles.success}>Yay! Berjaya 💖</p>
+        </>
+      )}
     </main>
   );
 }
@@ -44,7 +60,7 @@ export default function PasswordPage() {
 const styles = {
   bg: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #f8fafc 0%, #e0c3fc 100%)",
+    background: "linear-gradient(135deg, #fbc2eb 0%, #f9c6d0 100%)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -53,7 +69,9 @@ const styles = {
   title: {
     fontSize: 32,
     marginBottom: 24,
+    color: "#b35b7a",
     letterSpacing: 2,
+    fontWeight: "bold",
   },
   form: {
     display: "flex",
@@ -75,14 +93,19 @@ const styles = {
     fontSize: 18,
     borderRadius: 8,
     border: "none",
-    background: "#a084e8",
+    background: "#f8a5c2",
     color: "#fff",
     cursor: "pointer",
     fontWeight: "bold",
     transition: "background 0.2s",
   },
   error: {
-    color: "#e74c3c",
+    color: "#e57373",
+    marginTop: 8,
+    fontWeight: "bold",
+  },
+  success: {
+    color: "#b35b7a",
     marginTop: 8,
     fontWeight: "bold",
   },
