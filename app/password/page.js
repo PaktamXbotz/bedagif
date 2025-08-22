@@ -1,44 +1,89 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function PasswordPage() {
   const [input, setInput] = useState("");
-  const [error, setError] = useState("");
-  const router = useRouter();
+  const [error, setError] = useState(false);
 
-  const handleSubmit = (e) => {
+  // Tukar password ikut suka
+  const PASSWORD = "happybday";
+
+  function handleSubmit(e) {
     e.preventDefault();
-    const correctPassword = "tes123"; // tukar ikut suka kau 🎂
-
-    if (input === correctPassword) {
-      router.push("/puzzle"); // pergi ke page puzzle
+    if (input === PASSWORD) {
+      window.location.href = "/maze";
     } else {
-      setError("Wrong password! Try again 😅");
+      setError(true);
     }
-  };
+  }
 
   return (
-    <div className="flex h-screen items-center justify-center bg-pink-100">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-80 text-center">
-        <h1 className="text-2xl font-bold mb-4">Enter the Secret Password 🎁</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="password"
-            placeholder="Type password..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="w-full p-2 mb-3 border rounded-lg focus:outline-none"
-          />
-          {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg"
-          >
-            Unlock 🔓
-          </button>
-        </form>
-      </div>
-    </div>
+    <main style={styles.bg}>
+      <h1 style={styles.title}>🔒 Birthday Gate</h1>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          style={{ ...styles.input, borderColor: error ? "#e74c3c" : "#bbb" }}
+          type="password"
+          placeholder="Enter the secret code"
+          value={input}
+          onChange={e => {
+            setInput(e.target.value);
+            setError(false);
+          }}
+          autoFocus
+        />
+        <button style={styles.button} type="submit">
+          Unlock
+        </button>
+      </form>
+      {error && <p style={styles.error}>Wrong password! Try again...</p>}
+    </main>
   );
 }
+
+const styles = {
+  bg: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #f8fafc 0%, #e0c3fc 100%)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 32,
+    marginBottom: 24,
+    letterSpacing: 2,
+  },
+  form: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 12,
+  },
+  input: {
+    padding: 10,
+    fontSize: 18,
+    borderRadius: 8,
+    border: "2px solid #bbb",
+    outline: "none",
+    minWidth: 180,
+    transition: "border 0.2s",
+  },
+  button: {
+    padding: "10px 18px",
+    fontSize: 18,
+    borderRadius: 8,
+    border: "none",
+    background: "#a084e8",
+    color: "#fff",
+    cursor: "pointer",
+    fontWeight: "bold",
+    transition: "background 0.2s",
+  },
+  error: {
+    color: "#e74c3c",
+    marginTop: 8,
+    fontWeight: "bold",
+  },
+};
