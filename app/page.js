@@ -1,20 +1,32 @@
 "use client";
-import { useEffect } from "react";
+import { useRef } from "react";
 import confetti from "canvas-confetti";
 
 export default function Home() {
-  useEffect(() => {
-    const audio = new Audio("/cinnamon.mp3");
-    audio.play().catch(() => {});
-  }, []);
+  const audioRef = useRef(null);
+
+  // Confetti masa page load (optional)
+  // useEffect(() => { confetti(); }, []);
+
+  const handlePlayAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.play().catch(() => {});
+    }
+  };
 
   return (
     <div style={styles.bg}>
+      <audio
+        ref={audioRef}
+        src="/cinnamon.mp3"
+        preload="auto"
+        hidden
+      />
       <h1 style={styles.title}>🎀 Happy Birthday! 🎂</h1>
       <p style={styles.text}>Semoga panjang umur & murah rezeki ✨</p>
       <img src="/cakecute.gif" alt="Birthday Cake" width="200" />
       <br />
-      <a href="/password">
+      <a href="/password" onClick={handlePlayAudio}>
         <button style={styles.button}>Enter Birthday Gate 💖</button>
       </a>
     </div>
