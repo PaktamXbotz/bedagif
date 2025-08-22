@@ -1,49 +1,110 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function PuzzlePage() {
+  const [answer, setAnswer] = useState("");
+  const [error, setError] = useState(false);
   const router = useRouter();
-  const [tiles, setTiles] = useState([]);
-  const [message, setMessage] = useState("");
 
-  // Generate random tiles 1-9
-  useEffect(() => {
-    const numbers = [...Array(9).keys()].map((n) => n + 1);
-    setTiles(numbers.sort(() => Math.random() - 0.5));
-  }, []);
+  // Tukar soalan & jawapan ikut citarasa
+  const puzzle = "Aku sentiasa di depan kau waktu pagi, tapi hilang waktu malam. Siapa aku?";
+  const correct = "matahari";
 
-  // Swap two tiles
-  const swapTiles = (i, j) => {
-    const newTiles = [...tiles];
-    [newTiles[i], newTiles[j]] = [newTiles[j], newTiles[i]];
-    setTiles(newTiles);
-
-    // Check if solved
-    if (newTiles.every((val, idx) => val === idx + 1)) {
-      setMessage("🎉 Puzzle Completed!");
-      setTimeout(() => router.push("/maze"), 2000);
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (answer.trim().toLowerCase() === correct) {
+      router.push("/cake");
+    } else {
+      setError(true);
     }
-  };
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 text-white p-4">
-      <h1 className="text-3xl font-bold mb-6">🧩 Arrange 1 - 9</h1>
-      <div className="grid grid-cols-3 gap-3">
-        {tiles.map((num, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              if (i > 0) swapTiles(i, i - 1);
-              if (i < tiles.length - 1) swapTiles(i, i + 1);
-            }}
-            className="w-20 h-20 flex items-center justify-center bg-white text-black font-bold rounded-xl shadow-lg text-xl active:scale-95 transition"
-          >
-            {num}
-          </button>
-        ))}
-      </div>
-      {message && <p className="mt-6 text-2xl">{message}</p>}
-    </div>
+    <main style={styles.bg}>
+      <h1 style={styles.title}>🧩 Puzzle Time!</h1>
+      <p style={styles.puzzle}>{puzzle}</p>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="text"
+          placeholder="Jawapan..."
+          value={answer}
+          onChange={e => {
+            setAnswer(e.target.value);
+            setError(false);
+          }}
+          style={{ ...styles.input, borderColor: error ? "#e74c3c" : "#bbb" }}
+        />
+        <button style={styles.button} type="submit">
+          Jawab
+        </button>
+      </form>
+      {error && <p style={styles.error}>Salah! Cuba lagi...</p>}
+      <p style={styles.small}><a href="/maze" style={styles.link}>← Balik Maze</a></p>
+    </main>
   );
 }
+
+const styles = {
+  bg: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #f8fafc 0%, #a084e8 100%)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 32,
+    marginBottom: 20,
+    letterSpacing: 2,
+    color: "#a084e8",
+  },
+  puzzle: {
+    fontSize: 20,
+    marginBottom: 18,
+    color: "#444",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 12,
+  },
+  input: {
+    padding: 10,
+    fontSize: 18,
+    borderRadius: 8,
+    border: "2px solid #bbb",
+    outline: "none",
+    minWidth: 180,
+    transition: "border 0.2s",
+  },
+  button: {
+    padding: "10px 18px",
+    fontSize: 18,
+    borderRadius: 8,
+    border: "none",
+    background: "#a084e8",
+    color: "#fff",
+    cursor: "pointer",
+    fontWeight: "bold",
+    transition: "background 0.2s",
+  },
+  error: {
+    color: "#e74c3c",
+    marginTop: 8,
+    fontWeight: "bold",
+  },
+  small: {
+    fontSize: 14,
+    marginTop: 30,
+    color: "#888",
+  },
+  link: {
+    color: "#a084e8",
+    textDecoration: "underline",
+  },
+};
