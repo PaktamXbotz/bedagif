@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 const PUZZLE_SIZE = 3;
 const IMAGE_SIZE = 300;
 const TILE_SIZE = IMAGE_SIZE / PUZZLE_SIZE;
 
+// Utility untuk shuffle
 function shuffle(arr) {
   let a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -20,10 +20,10 @@ function isSolved(tiles) {
 }
 
 export default function PuzzlePage() {
-  const router = useRouter();
   const [tiles, setTiles] = useState([]);
   const [solved, setSolved] = useState(false);
 
+  // Setup puzzle
   useEffect(() => {
     let arr;
     do {
@@ -50,37 +50,32 @@ export default function PuzzlePage() {
 
   return (
     <main style={styles.bg}>
-      {/* Lagu background */}
-      <audio src="/lagu.mp3" autoPlay loop hidden />
       <h1 style={styles.title}>🌷 Sliding Puzzle: Tulips</h1>
-      <p style={styles.text}>Susun semua sampai jadi gambar bunga tulip!</p>
+      <p style={styles.text}>Susun sampai gambar bunga tulip siap!</p>
       <div style={styles.puzzle}>
         {tiles.map((v, i) => {
-          const tileIndex = i;
-          const value = v;
-          // Animasi posisi dengan translate
-          const x = (tileIndex % 3) * TILE_SIZE;
-          const y = Math.floor(tileIndex / 3) * TILE_SIZE;
+          if (v === 0) return null; // Slot kosong tak render tile
+          // Posisi semasa
+          const x = (i % 3) * TILE_SIZE;
+          const y = Math.floor(i / 3) * TILE_SIZE;
+          // Crop image ikut VALUE tile (bukan index slot)
+          const bgX = -((v-1) % 3) * TILE_SIZE;
+          const bgY = -Math.floor((v-1) / 3) * TILE_SIZE;
           return (
             <div
-              key={i}
+              key={v}
               style={{
                 ...styles.tile,
-                opacity: value === 0 ? 0 : 1,
-                background: value !== 0 ? `url("/tulips.jpg")` : "none",
+                backgroundImage: `url("/tulips.jpg")`,
                 backgroundSize: `${IMAGE_SIZE}px ${IMAGE_SIZE}px`,
-                backgroundPosition: value !== 0
-                  ? `${-((value-1) % 3) * TILE_SIZE}px ${-Math.floor((value-1) / 3) * TILE_SIZE}px`
-                  : "none",
-                cursor: solved ? "not-allowed" : value === 0 ? "default" : "pointer",
+                backgroundPosition: `${bgX}px ${bgY}px`,
                 transform: `translate(${x}px, ${y}px)`,
                 transition: "transform 0.3s cubic-bezier(.36,.07,.19,.97)"
               }}
               onClick={() => move(i)}
             >
-              {value !== 0 && (
-                <span style={styles.numHint}>{value}</span>
-              )}
+              {/* Optional: nombor hint */}
+              <span style={styles.numHint}>{v}</span>
             </div>
           );
         })}
@@ -88,8 +83,7 @@ export default function PuzzlePage() {
       {solved && (
         <div style={styles.winBox}>
           <img src="/success.gif" width={80} />
-          <p style={styles.success}>Yay! Puzzle siap 🌷</p>
-          <button style={styles.button} onClick={() => router.push("/maze")}>Next: Maze!</button>
+          <p style={styles.success}>Tahniah! Puzzle siap 🌷</p>
         </div>
       )}
     </main>
@@ -125,18 +119,20 @@ const styles = {
     border: "2px solid #f8a5c2",
     boxSizing: "border-box",
     display: "flex", alignItems: "center", justifyContent: "center",
-    userSelect: "none"
+    userSelect: "none",
+    cursor: "pointer",
+    overflow: "hidden"
   },
   numHint: {
     position: "absolute",
-    top: 6,
-    right: 10,
+    bottom: 8,
+    right: 12,
     background: "#fff6faee",
     color: "#b35b7a",
     borderRadius: "50%",
     fontWeight: "bold",
-    fontSize: 20,
-    padding: "2px 10px",
+    fontSize: 18,
+    padding: "2px 8px",
     boxShadow: "0 2px 8px #f8a5c233"
   },
   winBox: {
@@ -146,16 +142,5 @@ const styles = {
     color: "#b35b7a",
     fontWeight: "bold",
     marginTop: 8
-  },
-  button: {
-    background: "#f8a5c2",
-    color: "#fff",
-    border: "none",
-    padding: "10px 18px",
-    borderRadius: 8,
-    fontWeight: "bold",
-    fontSize: 18,
-    marginTop: 10,
-    cursor: "pointer"
   }
 };
