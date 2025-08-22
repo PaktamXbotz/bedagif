@@ -1,159 +1,131 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
-const PADLOCK_SVG = (
-  <svg
-    width="64"
-    height="64"
-    viewBox="0 0 64 64"
-    fill="none"
-    style={{ display: "block", margin: "0 auto" }}
-  >
-    <rect x="14" y="28" width="36" height="28" rx="6" fill="#FFD700" />
-    <rect x="22" y="40" width="20" height="10" rx="4" fill="#B8860B" />
-    <path
-      d="M20 28V20C20 12.268 26.268 6 34 6C41.732 6 48 12.268 48 20V28"
-      stroke="#333"
-      strokeWidth="4"
-      strokeLinejoin="round"
-      fill="none"
-    />
-    <circle cx="32" cy="48" r="3" fill="#333" />
-  </svg>
-);
-
-const CORRECT_PASSWORD = "2580"; // Tukar sini untuk password lain
+const PIN_LENGTH = 6; // Boleh tukar ke 4, 5, 6 ikut suka
 
 export default function PasswordPage() {
-  const [input, setInput] = useState("");
-  const [unlocked, setUnlocked] = useState(false);
-  const [shake, setShake] = useState(false);
-  const inputRef = useRef(null);
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const handleInputChange = (e) => {
-    let val = e.target.value.replace(/\D/g, ""); // Only digits
-    if (val.length > 4) val = val.slice(0, 4);
-    setInput(val);
-  };
-
-  const handleUnlock = () => {
-    if (input === CORRECT_PASSWORD) {
-      setUnlocked(true);
-    } else {
-      setShake(true);
-      setTimeout(() => setShake(false), 600);
-      setInput("");
-      inputRef.current && inputRef.current.focus();
+  const handleNum = (num) => {
+    if (pin.length < PIN_LENGTH) {
+      setPin(pin + num);
+      setError("");
     }
   };
 
-  // Enter key support
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && input.length === 4) {
-      handleUnlock();
+  const handleDelete = () => {
+    setPin(pin.slice(0, -1));
+  };
+
+  const handleSubmit = () => {
+    if (pin.length === PIN_LENGTH) {
+      // Contoh: Validasi PIN, tukar ikut keperluan
+      if (pin === "123456") {
+        setSuccess(true);
+        setError("");
+        setPin("");
+      } else {
+        setError("PIN salah, cuba lagi!");
+        setPin("");
+      }
+    } else {
+      setError("Sila masukkan PIN penuh!");
     }
   };
 
   return (
-    <div className="pw-container">
-      <div className={`padlock${shake ? " shake" : ""}${unlocked ? " unlocked" : ""}`}>
-        {PADLOCK_SVG}
+    <div style={styles.wrap}>
+      <div style={styles.lockIcon}>🔒</div>
+      <h2 style={{color:"#b35b7a"}}>Masukkan PIN</h2>
+      <div style={styles.pinRow}>
+        {[...Array(PIN_LENGTH)].map((_, i) => (
+          <span key={i} style={styles.pinDot}>
+            {pin[i] ? "●" : "○"}
+          </span>
+        ))}
       </div>
-      <div style={{ margin: "20px 0" }}>
-        <input
-          type="password"
-          inputMode="numeric"
-          autoFocus
-          ref={inputRef}
-          maxLength={4}
-          value={input}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          disabled={unlocked}
-          className="pw-input"
-          placeholder="••••"
-        />
+      <div style={styles.keypad}>
+        {[1,2,3,4,5,6,7,8,9,0].map((num, i) => (
+          <button
+            key={i}
+            style={styles.keyBtn}
+            onClick={() => handleNum(num.toString())}
+            disabled={pin.length === PIN_LENGTH}
+          >
+            {num}
+          </button>
+        ))}
+        <button style={styles.keyBtn} onClick={handleDelete} disabled={!pin.length}>⌫</button>
+        <button style={styles.keyBtnMain} onClick={handleSubmit}>OK</button>
       </div>
-      <button
-        disabled={input.length !== 4 || unlocked}
-        onClick={handleUnlock}
-        className="unlock-btn"
-      >
-        Unlock
-      </button>
-      <style jsx>{`
-        .pw-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          min-height: 90vh;
-          justify-content: center;
-          background: #faf8ef;
-        }
-        .padlock {
-          transition: transform 0.2s;
-          will-change: transform;
-        }
-        .padlock.shake {
-          animation: shake 0.6s;
-        }
-        @keyframes shake {
-          0% { transform: translateX(0); }
-          15% { transform: translateX(-10px); }
-          30% { transform: translateX(10px); }
-          45% { transform: translateX(-10px); }
-          60% { transform: translateX(10px); }
-          75% { transform: translateX(-5px); }
-          100% { transform: translateX(0); }
-        }
-        .padlock.unlocked {
-          filter: drop-shadow(0 0 12px #ffd700);
-          opacity: 0.7;
-        }
-        .pw-input {
-          font-size: 2.2rem;
-          letter-spacing: 0.7em;
-          text-align: center;
-          width: 10em;
-          border: 2px solid #ffc107;
-          border-radius: 1.5em;
-          padding: 0.5em 0.7em;
-          outline: none;
-          background: #fffde7;
-          color: #111;
-          box-shadow: 0 2px 8px #ffe08255;
-          margin-bottom: 10px;
-        }
-        .pw-input:disabled {
-          background: #eee;
-        }
-        .unlock-btn {
-          font-size: 1.1rem;
-          padding: 0.6em 2em;
-          border: none;
-          border-radius: 1em;
-          background: #ffd700;
-          color: #333;
-          font-weight: bold;
-          box-shadow: 0 2px 6px #b8860b44;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .unlock-btn:disabled {
-          background: #ffe082;
-          color: #aaa;
-          cursor: not-allowed;
-        }
-        @media (max-width: 480px) {
-          .pw-input { width: 7.2em; font-size: 1.8rem; }
-          .padlock svg { width: 44px; height: 44px; }
-        }
-      `}</style>
-      {unlocked && (
-        <div style={{ marginTop: 20, color: "#388e3c", fontWeight: "bold" }}>
-          Unlocked!
-        </div>
-      )}
+      {error && <div style={styles.error}>{error}</div>}
+      {success && <div style={styles.success}>PIN betul! Selamat datang 🎉</div>}
     </div>
   );
 }
+
+const styles = {
+  wrap: {
+    width: 300,
+    margin: "40px auto",
+    padding: 24,
+    borderRadius: 14,
+    background: "#fff",
+    boxShadow: "0 8px 32px #0001",
+    textAlign: "center"
+  },
+  lockIcon: {
+    fontSize: 40,
+    marginBottom: 12
+  },
+  pinRow: {
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: 20,
+    gap: 12
+  },
+  pinDot: {
+    fontSize: 32,
+    color: "#b35b7a"
+  },
+  keypad: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 10,
+    marginBottom: 14
+  },
+  keyBtn: {
+    fontSize: 22,
+    padding: "16px 0",
+    borderRadius: 8,
+    border: "1px solid #f8a5c2",
+    background: "#fbc2eb",
+    color: "#b35b7a",
+    fontWeight: "bold",
+    cursor: "pointer"
+  },
+  keyBtnMain: {
+    gridColumn: "1 / span 3",
+    fontSize: 22,
+    padding: "16px 0",
+    borderRadius: 8,
+    border: "1px solid #f8a5c2",
+    background: "#b35b7a",
+    color: "#fff",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginTop: 8
+  },
+  error: {
+    marginTop: 10,
+    color: "#e74c3c",
+    fontWeight: "bold"
+  },
+  success: {
+    marginTop: 14,
+    color: "#5cb85c",
+    fontWeight: "bold"
+  }
+};
