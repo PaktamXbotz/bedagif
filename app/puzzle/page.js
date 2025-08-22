@@ -2,6 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+const PUZZLE_SIZE = 3;
+const IMAGE_SIZE = 300;
+const TILE_SIZE = IMAGE_SIZE / PUZZLE_SIZE;
+
 function shuffle(arr) {
   let a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -10,7 +14,6 @@ function shuffle(arr) {
   }
   return a;
 }
-
 function isSolved(tiles) {
   for (let i = 0; i < 8; i++) if (tiles[i] !== i + 1) return false;
   return tiles[8] === 0;
@@ -47,29 +50,40 @@ export default function PuzzlePage() {
 
   return (
     <main style={styles.bg}>
+      {/* Lagu background */}
+      <audio src="/lagu.mp3" autoPlay loop hidden />
       <h1 style={styles.title}>🌷 Sliding Puzzle: Tulips</h1>
       <p style={styles.text}>Susun semua sampai jadi gambar bunga tulip!</p>
       <div style={styles.puzzle}>
-        {tiles.map((v, i) => (
-          <div
-            key={i}
-            style={{
-              ...styles.tile,
-              opacity: v === 0 ? 0 : 1,
-              background: v !== 0 ? `url("/tulips.jpg")` : "none",
-              backgroundSize: "300px 300px",
-              backgroundPosition: v !== 0
-                ? `${-(i % 3) * 100}px ${-Math.floor(i / 3) * 100}px`
-                : "none",
-              cursor: solved ? "not-allowed" : v === 0 ? "default" : "pointer"
-            }}
-            onClick={() => move(i)}
-          >
-            {v !== 0 && (
-              <span style={styles.numHint}>{v}</span>
-            )}
-          </div>
-        ))}
+        {tiles.map((v, i) => {
+          const tileIndex = i;
+          const value = v;
+          // Animasi posisi dengan translate
+          const x = (tileIndex % 3) * TILE_SIZE;
+          const y = Math.floor(tileIndex / 3) * TILE_SIZE;
+          return (
+            <div
+              key={i}
+              style={{
+                ...styles.tile,
+                opacity: value === 0 ? 0 : 1,
+                background: value !== 0 ? `url("/tulips.jpg")` : "none",
+                backgroundSize: `${IMAGE_SIZE}px ${IMAGE_SIZE}px`,
+                backgroundPosition: value !== 0
+                  ? `${-((value-1) % 3) * TILE_SIZE}px ${-Math.floor((value-1) / 3) * TILE_SIZE}px`
+                  : "none",
+                cursor: solved ? "not-allowed" : value === 0 ? "default" : "pointer",
+                transform: `translate(${x}px, ${y}px)`,
+                transition: "transform 0.3s cubic-bezier(.36,.07,.19,.97)"
+              }}
+              onClick={() => move(i)}
+            >
+              {value !== 0 && (
+                <span style={styles.numHint}>{value}</span>
+              )}
+            </div>
+          );
+        })}
       </div>
       {solved && (
         <div style={styles.winBox}>
@@ -98,20 +112,20 @@ const styles = {
     color: "#b35b7a", marginBottom: 12, fontSize: 18
   },
   puzzle: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3,100px)",
-    gridTemplateRows: "repeat(3,100px)",
-    gap: 4,
+    position: "relative",
+    width: 300,
+    height: 300,
     margin: "24px 0"
   },
   tile: {
+    position: "absolute",
     width: 100, height: 100,
     borderRadius: 10,
     backgroundColor: "#fff",
     border: "2px solid #f8a5c2",
     boxSizing: "border-box",
-    position: "relative",
-    display: "flex", alignItems: "center", justifyContent: "center"
+    display: "flex", alignItems: "center", justifyContent: "center",
+    userSelect: "none"
   },
   numHint: {
     position: "absolute",
