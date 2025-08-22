@@ -1,43 +1,97 @@
 "use client";
-import { useEffect, useState } from "react";
-import confetti from "canvas-confetti";
+import { useRouter } from "next/navigation";
 
 export default function CakePage() {
-  const [balloons, setBalloons] = useState([]);
-
-  useEffect(() => {
-    // trigger confetti sekali je bila masuk page
-    confetti();
-    // generate balloons hanya kat client
-    const randomBalloons = Array.from({ length: 10 }).map(() => ({
-      left: `${Math.random() * 90}%`,
-      top: `${Math.random() * 90}%`,
-      duration: `${2 + Math.random() * 3}s`,
-    }));
-    setBalloons(randomBalloons);
-  }, []);
-
+  const router = useRouter();
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100 relative overflow-hidden">
-      <h1 className="text-5xl font-bold text-pink-700 mb-4">
-        🎂 Happy Birthday! 🎂
-      </h1>
-      <p className="text-xl text-pink-600 mb-8">Enjoy your special day 💖</p>
-
-      {/* Floating balloons */}
-      {balloons.map((b, i) => (
-        <div
-          key={i}
-          className="absolute text-4xl animate-bounce"
-          style={{
-            left: b.left,
-            top: b.top,
-            animationDuration: b.duration,
-          }}
-        >
-          🎈
-        </div>
-      ))}
-    </div>
+    <main style={styles.bg}>
+      <h1 style={styles.title}>🎂 Happy Birthday!</h1>
+      <div style={styles.cake}>
+        <div style={styles.cakeBase}></div>
+        <div style={styles.candle}></div>
+      </div>
+      <p style={styles.text}>
+        Semoga panjang umur, murah rezeki, dan bahagia selalu!<br />
+        Tekan butang bawah untuk ucapan akhir 🎉
+      </p>
+      <button style={styles.button} onClick={() => router.push("/")}>
+        Go to Home
+      </button>
+      <p style={styles.small}><a href="/puzzle" style={styles.link}>← Back to Puzzle</a></p>
+    </main>
   );
 }
+
+const styles = {
+  bg: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #fffbe7 0%, #ffe5ec 100%)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 36,
+    marginBottom: 18,
+    fontWeight: "bold",
+    color: "#ff6f91",
+    letterSpacing: 2,
+  },
+  cake: {
+    position: "relative",
+    width: 120,
+    height: 120,
+    marginBottom: 24,
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  cakeBase: {
+    width: 90,
+    height: 45,
+    background: "#ffb677",
+    borderRadius: "0 0 40px 40px",
+    boxShadow: "0 4px 12px #ffa50255",
+    position: "absolute",
+    bottom: 0,
+  },
+  candle: {
+    width: 10,
+    height: 40,
+    background: "#fff",
+    borderRadius: 5,
+    position: "absolute",
+    bottom: 45,
+    left: "50%",
+    transform: "translateX(-50%)",
+    boxShadow: "0 0 8px #ff6f91",
+  },
+  text: {
+    fontSize: 18,
+    marginBottom: 24,
+    color: "#ff6f91",
+    textAlign: "center",
+  },
+  button: {
+    background: "#ff6f91",
+    color: "#fff",
+    border: "none",
+    padding: "12px 26px",
+    borderRadius: 8,
+    fontWeight: "bold",
+    fontSize: 18,
+    cursor: "pointer",
+    marginBottom: 18,
+    transition: "background 0.2s",
+  },
+  small: {
+    fontSize: 14,
+    marginTop: 12,
+    color: "#aaa",
+  },
+  link: {
+    color: "#ff6f91",
+    textDecoration: "underline",
+  },
+};
