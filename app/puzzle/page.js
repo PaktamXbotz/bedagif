@@ -1,46 +1,82 @@
 "use client";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+// Helper: shuffle array
+function shuffle(arr) {
+  let a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Check solved
+function isSolved(tiles) {
+  for (let i = 0; i < 8; i++) if (tiles[i] !== i + 1) return false;
+  return tiles[8] === 0;
+}
+
 export default function PuzzlePage() {
-  const [answer, setAnswer] = useState("");
-  const [error, setError] = useState(false);
   const router = useRouter();
+  const [tiles, setTiles] = useState([]);
+  const [solved, setSolved] = useState(false);
 
-  // Tukar soalan & jawapan ikut citarasa
-  const puzzle = "Aku sentiasa di depan kau waktu pagi, tapi hilang waktu malam. Siapa aku?";
-  const correct = "matahari";
+  useEffect(() => {
+    let arr;
+    do {
+      arr = shuffle([1,2,3,4,5,6,7,8,0]);
+    } while (isSolved(arr));
+    setTiles(arr);
+  }, []);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (answer.trim().toLowerCase() === correct) {
-      router.push("/cake");
-    } else {
-      setError(true);
+  function move(idx) {
+    if (solved) return;
+    const zeroIdx = tiles.indexOf(0);
+    const canMove = [
+      zeroIdx - 3, zeroIdx + 3,
+      zeroIdx % 3 !== 0 ? zeroIdx - 1 : -1,
+      zeroIdx % 3 !== 2 ? zeroIdx + 1 : -1
+    ];
+    if (canMove.includes(idx)) {
+      const newTiles = tiles.slice();
+      [newTiles[zeroIdx], newTiles[idx]] = [newTiles[idx], newTiles[zeroIdx]];
+      setTiles(newTiles);
+      if (isSolved(newTiles)) setSolved(true);
     }
   }
 
   return (
     <main style={styles.bg}>
-      <h1 style={styles.title}>🧩 Puzzle Time!</h1>
-      <p style={styles.puzzle}>{puzzle}</p>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="text"
-          placeholder="Jawapan..."
-          value={answer}
-          onChange={e => {
-            setAnswer(e.target.value);
-            setError(false);
-          }}
-          style={{ ...styles.input, borderColor: error ? "#e74c3c" : "#bbb" }}
-        />
-        <button style={styles.button} type="submit">
-          Jawab
-        </button>
-      </form>
-      {error && <p style={styles.error}>Salah! Cuba lagi...</p>}
-      <p style={styles.small}><a href="/maze" style={styles.link}>← Balik Maze</a></p>
+      <h1 style={styles.title}>🌷 Sliding Puzzle: Tulips</h1>
+      <p style={styles.text}>Susun semua sampai jadi gambar bunga tulip!</p>
+      <div style={styles.puzzle}>
+        {tiles.map((v, i) => (
+          <div
+            key={i}
+            style={{
+              ...styles.tile,
+              opacity: v === 0 ? 0 : 1,
+              background: v !== 0 ? `url("/tulip.jpg")` : "none",
+              backgroundSize: "300px 300px",
+              backgroundPosition: v !== 0 ?
+                `${-((v - 1) % 3) * 100}px ${-Math.floor((v - 1) / 3) * 100}px` : "none",
+              cursor: solved ? "not-allowed" : v === 0 ? "default" : "pointer"
+            }}
+            onClick={() => move(i)}
+          >
+            {/* v !== 0 ? v : "" */}
+          </div>
+        ))}
+      </div>
+      {solved && (
+        <div style={styles.winBox}>
+          <img src="/success.gif" width={80} />
+          <p style={styles.success}>Yay! Puzzle siap 🌷</p>
+          <button style={styles.button} onClick={() => router.push("/maze")}>Next: Maze!</button>
+        </div>
+      )}
     </main>
   );
 }
@@ -48,63 +84,49 @@ export default function PuzzlePage() {
 const styles = {
   bg: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #f8fafc 0%, #a084e8 100%)",
+    background: "linear-gradient(135deg, #fbc2eb 0%, #f9c6d0 100%)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   title: {
-    fontSize: 32,
-    marginBottom: 20,
-    letterSpacing: 2,
-    color: "#a084e8",
+    fontSize: 32, marginBottom: 10, color: "#b35b7a"
+  },
+  text: {
+    color: "#b35b7a", marginBottom: 12, fontSize: 18
   },
   puzzle: {
-    fontSize: 20,
-    marginBottom: 18,
-    color: "#444",
-    textAlign: "center",
+    display: "grid",
+    gridTemplateColumns: "repeat(3,100px)",
+    gridTemplateRows: "repeat(3,100px)",
+    gap: 4,
+    margin: "24px 0"
+  },
+  tile: {
+    width: 100, height: 100,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    border: "2px solid #f8a5c2",
+    boxSizing: "border-box"
+  },
+  winBox: {
+    marginTop: 20, textAlign: "center"
+  },
+  success: {
+    color: "#b35b7a",
     fontWeight: "bold",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 12,
-  },
-  input: {
-    padding: 10,
-    fontSize: 18,
-    borderRadius: 8,
-    border: "2px solid #bbb",
-    outline: "none",
-    minWidth: 180,
-    transition: "border 0.2s",
+    marginTop: 8
   },
   button: {
-    padding: "10px 18px",
-    fontSize: 18,
-    borderRadius: 8,
-    border: "none",
-    background: "#a084e8",
+    background: "#f8a5c2",
     color: "#fff",
-    cursor: "pointer",
+    border: "none",
+    padding: "10px 18px",
+    borderRadius: 8,
     fontWeight: "bold",
-    transition: "background 0.2s",
-  },
-  error: {
-    color: "#e74c3c",
-    marginTop: 8,
-    fontWeight: "bold",
-  },
-  small: {
-    fontSize: 14,
-    marginTop: 30,
-    color: "#888",
-  },
-  link: {
-    color: "#a084e8",
-    textDecoration: "underline",
-  },
+    fontSize: 18,
+    marginTop: 10,
+    cursor: "pointer"
+  }
 };
