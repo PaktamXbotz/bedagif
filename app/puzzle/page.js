@@ -58,7 +58,7 @@ export default function PuzzlePage() {
             style={{
               ...styles.tile,
               opacity: v === 0 ? 0 : 1,
-              background: v !== 0 ? `url("/tulip.jpg")` : "none",
+              background: v !== 0 ? `url("/tulips.jpg")` : "none",
               backgroundSize: "300px 300px",
               backgroundPosition: v !== 0 ?
                 `${-((v - 1) % 3) * 100}px ${-Math.floor((v - 1) / 3) * 100}px` : "none",
