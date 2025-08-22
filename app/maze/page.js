@@ -2,89 +2,127 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-// Maze size and layout (1: wall, 0: path, 2: end)
-const MAZE = [
+// Maze grid: 1 = wall, 0 = path, H = Home, B = Bear
+const initialMaze = [
   [1,1,1,1,1,1,1],
-  [1,0,0,0,1,0,1],
+  [1,0,0,0,1,'H',1],
   [1,0,1,0,1,0,1],
   [1,0,1,0,0,0,1],
   [1,0,1,1,1,0,1],
-  [1,0,0,0,1,2,1],
-  [1,1,1,1,1,1,1]
+  [1,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1],
 ];
-const START = [1,1];
 
-function findEnd(maze) {
-  for (let i=0; i<maze.length; i++) for (let j=0; j<maze[0].length; j++)
-    if (maze[i][j] === 2) return [i,j];
-}
+const startBear = { x: 5, y: 4 }; // row, col
+const home = { x: 1, y: 5 };
 
 export default function MazePage() {
   const router = useRouter();
-  const [pos, setPos] = useState(START);
-  const [solved, setSolved] = useState(false);
-  const end = findEnd(MAZE);
+  const [bear, setBear] = useState(startBear);
+  const [win, setWin] = useState(false);
+  const [anim, setAnim] = useState(false);
 
-  // Keyboard control
   useEffect(() => {
-    function handle(e) {
-      if (solved) return;
-      if (e.key === "ArrowUp") move(-1,0);
-      if (e.key === "ArrowDown") move(1,0);
-      if (e.key === "ArrowLeft") move(0,-1);
-      if (e.key === "ArrowRight") move(0,1);
-    }
+    const handle = (e) => {
+      if (win) return;
+      let dx = 0, dy = 0;
+      if (e.key === "ArrowUp") dx = -1;
+      if (e.key === "ArrowDown") dx = 1;
+      if (e.key === "ArrowLeft") dy = -1;
+      if (e.key === "ArrowRight") dy = 1;
+      move(dx, dy);
+    };
     window.addEventListener("keydown", handle);
     return () => window.removeEventListener("keydown", handle);
-  }, [pos, solved]);
+    // eslint-disable-next-line
+  }, [bear, win]);
 
-  function move(dx,dy) {
-    if (solved) return;
-    let [x,y] = pos;
-    let nx = x+dx, ny = y+dy;
-    if (MAZE[nx][ny] === 1) return;
-    setPos([nx,ny]);
-    if (MAZE[nx][ny] === 2) setSolved(true);
+  function move(dx, dy) {
+    const x = bear.x + dx, y = bear.y + dy;
+    if (!win &&
+      initialMaze[x] && initialMaze[x][y] !== undefined &&
+      initialMaze[x][y] !== 1
+    ) {
+      setAnim(true);
+      setTimeout(() => setAnim(false), 200);
+      setBear({ x, y });
+      if (x === home.x && y === home.y) {
+        setWin(true);
+        setTimeout(() => router.push("/scrapbook"), 1700);
+      }
+    }
   }
 
   return (
     <main style={styles.bg}>
-      <h1 style={styles.title}>🏠 Maze to Home</h1>
+      <audio src="/lagu.mp3" autoPlay loop hidden />
+      <h1 style={styles.title}><span role="img" aria-label="home">🏠</span> Maze to Home</h1>
       <p style={styles.text}>Gerakkan karakter ke rumah! (guna arrow key atau butang bawah)</p>
       <div style={styles.maze}>
-        {MAZE.map((row, r) =>
-          row.map((cell, c) => (
-            <div key={r+"-"+c} style={{
-              ...styles.cell,
-              background:
-                cell === 1 ? "#ecb2d5" :
-                cell === 2 ? "#ffe066" : "#fff"
-            }}>
-              {pos[0] === r && pos[1] === c && (
-                <span style={{fontSize:32}}>🐻</span>
-              )}
-              {cell === 2 && pos[0] !== r && pos[1] !== c && (
-                <span style={{fontSize:24}}>🏡</span>
-              )}
-            </div>
-          ))
+        {initialMaze.map((row, rowIdx) =>
+          row.map((cell, colIdx) => {
+            const isBear = bear.x === rowIdx && bear.y === colIdx;
+            const isHome = rowIdx === home.x && colIdx === home.y;
+            return (
+              <div
+                key={rowIdx + "," + colIdx}
+                style={{
+                  ...styles.cell,
+                  background: cell === 1 ? "#fbc2eb" : "#fff",
+                  border: isHome ? "2.5px solid #fbc2eb" : "1px solid #f8a5c299",
+                  position: "relative"
+                }}
+              >
+                {isHome && (
+                  <span style={{
+                    fontSize: 24,
+                    position: "absolute",
+                    left: "50%", top: "50%",
+                    transform: "translate(-50%,-50%)",
+                    opacity: isBear && win ? 0 : 1,
+                    transition: "opacity 0.5s"
+                  }}>🏠</span>
+                )}
+                {isBear && (
+                  <span style={{
+                    fontSize: 28,
+                    position: "absolute",
+                    left: "50%", top: "50%",
+                    transform: "translate(-50%,-50%) " + (anim ? "scale(1.15)" : ""),
+                    transition: "transform 0.2s"
+                  }}>🐻</span>
+                )}
+                {/* Animasi confetti bila win */}
+                {isBear && isHome && win && (
+                  <span style={{
+                    position: "absolute",
+                    left: "50%", top: "50%", transform: "translate(-50%,-50%)",
+                    fontSize: 30, animation: "pop 1.2s"
+                  }}>🎉</span>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
-      <div style={styles.btnRow}>
-        <button style={styles.btn} onClick={()=>move(-1,0)}>⬆️</button>
+      <div style={styles.controls}>
+        <button onClick={() => move(-1,0)} style={styles.arrow}>↑</button>
         <div>
-          <button style={styles.btn} onClick={()=>move(0,-1)}>⬅️</button>
-          <button style={styles.btn} onClick={()=>move(0,1)}>➡️</button>
+          <button onClick={() => move(0,-1)} style={styles.arrow}>←</button>
+          <button onClick={() => move(0,1)} style={styles.arrow}>→</button>
         </div>
-        <button style={styles.btn} onClick={()=>move(1,0)}>⬇️</button>
+        <button onClick={() => move(1,0)} style={styles.arrow}>↓</button>
       </div>
-      {solved && (
-        <div style={styles.winBox}>
-          <img src="/cakecute.gif" width={80} />
-          <p style={styles.success}>Sampai rumah! Jom tengok scrapbook 🎀</p>
-          <button style={styles.button} onClick={() => router.push("/scrapbook")}>Next: Scrapbook</button>
-        </div>
-      )}
+      {win && <div style={styles.winText}>Tahniah! Sampai rumah! 🎉</div>}
+      <style>
+        {`
+        @keyframes pop {
+          0% { transform: scale(1) translate(-50%,-50%);}
+          50% { transform: scale(1.7) translate(-50%,-50%);}
+          100% { transform: scale(1) translate(-50%,-50%);}
+        }
+        `}
+      </style>
     </main>
   );
 }
@@ -93,52 +131,53 @@ const styles = {
   bg: {
     minHeight: "100vh",
     background: "linear-gradient(135deg, #fbc2eb 0%, #f9c6d0 100%)",
-    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  title: { fontSize: 32, marginBottom: 10, color: "#b35b7a" },
-  text: { color: "#b35b7a", marginBottom: 12, fontSize: 18, textAlign: "center" },
+  title: { fontSize: 32, color: "#b35b7a" },
+  text: { color: "#b35b7a", fontSize: 18 },
   maze: {
     display: "grid",
-    gridTemplateColumns: "repeat(7,40px)",
-    gridTemplateRows: "repeat(7,40px)",
-    gap: 2,
-    background: "#f8a5c2",
-    borderRadius: 10,
-    margin: "20px 0"
+    gridTemplateColumns: "repeat(7, 34px)",
+    gap: 3,
+    margin: "30px 0",
+    background: "#ffc8e6",
+    padding: 14,
+    borderRadius: 18
   },
   cell: {
-    width: 40, height: 40,
-    borderRadius: 6,
-    border: "1px solid #f8a5c2",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: 18,
-    boxSizing: "border-box"
+    width: 34,
+    height: 34,
+    borderRadius: 7,
+    background: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  btnRow: {
-    display: "flex", flexDirection: "column", alignItems: "center", gap: 8
+  controls: {
+    marginTop: 20,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 8
   },
-  btn: {
-    background: "#f8a5c2",
-    color: "#fff",
+  arrow: {
+    background: "#fbc2eb",
     border: "none",
-    padding: "10px 16px",
     borderRadius: 8,
-    fontWeight: "bold",
     fontSize: 22,
-    margin: 4,
-    cursor: "pointer"
+    padding: "8px 18px",
+    margin: "2px 7px",
+    color: "#b35b7a",
+    cursor: "pointer",
+    boxShadow: "0 2px 8px #f8a5c233"
   },
-  winBox: { marginTop: 18, textAlign: "center" },
-  success: { color: "#b35b7a", fontWeight: "bold", marginTop: 8 },
-  button: {
-    background: "#f8a5c2",
-    color: "#fff",
-    border: "none",
-    padding: "10px 18px",
-    borderRadius: 8,
+  winText: {
+    marginTop: 16,
+    color: "#27ae60",
     fontWeight: "bold",
-    fontSize: 18,
-    marginTop: 10,
-    cursor: "pointer"
+    fontSize: 20
   }
 };
