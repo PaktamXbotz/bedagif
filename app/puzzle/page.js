@@ -58,7 +58,7 @@ export default function PuzzlePage() {
             style={{
               ...styles.tile,
               opacity: v === 0 ? 0 : 1,
-              background: v !== 0 ? `url("/tulips.jpg")` : "none",
+              background: v !== 0 ? `url("/tulip.avif")` : "none",
               backgroundSize: "300px 300px",
               backgroundPosition: v !== 0 ?
                 `${-((v - 1) % 3) * 100}px ${-Math.floor((v - 1) / 3) * 100}px` : "none",
@@ -66,7 +66,9 @@ export default function PuzzlePage() {
             }}
             onClick={() => move(i)}
           >
-            {/* v !== 0 ? v : "" */}
+            {v !== 0 && (
+              <span style={styles.numHint}>{v}</span>
+            )}
           </div>
         ))}
       </div>
@@ -108,7 +110,21 @@ const styles = {
     borderRadius: 10,
     backgroundColor: "#fff",
     border: "2px solid #f8a5c2",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
+    position: "relative",
+    display: "flex", alignItems: "center", justifyContent: "center"
+  },
+  numHint: {
+    position: "absolute",
+    top: 6,
+    right: 10,
+    background: "#fff6faee",
+    color: "#b35b7a",
+    borderRadius: "50%",
+    fontWeight: "bold",
+    fontSize: 20,
+    padding: "2px 10px",
+    boxShadow: "0 2px 8px #f8a5c233"
   },
   winBox: {
     marginTop: 20, textAlign: "center"
