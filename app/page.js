@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import confetti from "canvas-confetti";
 
 export default function Home() {
-  // Trigger confetti
   const launchConfetti = () => {
     confetti({
       particleCount: 200,
@@ -12,7 +11,6 @@ export default function Home() {
     });
   };
 
-  // Auto play music (public/birthday.mp3)
   useEffect(() => {
     const audio = new Audio("/cinnamon.mp3");
     audio.play().catch(() => {
@@ -27,6 +25,10 @@ export default function Home() {
       <img src="/cakecute.gif" alt="Birthday Cake" width="200" />
       <br />
       <button onClick={launchConfetti}>Celebrate 🎊</button>
+      <br />
+      <a href="/password">
+        <button style={{marginTop: 20}}>Masuk Birthday Gate 🔒</button>
+      </a>
     </div>
   );
 }
