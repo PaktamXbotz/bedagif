@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function PasswordPage() {
   const [input, setInput] = useState("");
   const [state, setState] = useState("idle"); // idle, error, success
-  const PASSWORD = "tulipbday";
+  const PASSWORD = "shida";
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -43,13 +43,13 @@ export default function PasswordPage() {
       </form>
       {state === "error" && (
         <>
-          <img src="/error.gif" alt="error" width={80} style={{ margin: 8 }} />
+          <img src="/wrong.gif" alt="error" width={80} style={{ margin: 8 }} />
           <p style={styles.error}>Salah password! 🐻 Cuba lagi~</p>
         </>
       )}
       {state === "success" && (
         <>
-          <img src="/success.gif" alt="success" width={80} style={{ margin: 8 }} />
+          <img src="/correct.gif" alt="success" width={80} style={{ margin: 8 }} />
           <p style={styles.success}>Yay! Berjaya 💖</p>
         </>
       )}
