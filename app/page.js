@@ -22,12 +22,12 @@ export default function Home() {
         preload="auto"
         hidden
       />
-      <h1 style={styles.title}>🎀 Happy Birthday! 🎂</h1>
-      <p style={styles.text}>Semoga panjang umur & murah rezeki ✨</p>
+      <h1 style={styles.title}>🎀 Happy Birthday Kamuu! 🎂</h1>
+      <p style={styles.text}>Semoga panjang umur, murah rezeki & may all your dreams come true ✨ Always stay my sweet Shida 💕</p>
       <img src="/cakecute.gif" alt="Birthday Cake" width="200" />
       <br />
       <a href="/password" onClick={handlePlayAudio}>
-        <button style={styles.button}>Enter Birthday Gate 💖</button>
+        <button style={styles.button}>Tekanlahh,kalau nak main gamee 🙄🌷</button>
       </a>
     </div>
   );
