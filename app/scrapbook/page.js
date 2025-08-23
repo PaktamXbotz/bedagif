@@ -29,8 +29,8 @@ export default function Scrapbook() {
 
   return (
     <div style={styles.bg}>
-      <audio src="/lagu.mp3" autoPlay loop hidden />
-      <h1 style={{color: "#b35b7a", marginBottom: 22}}>My Scrapbook</h1>
+      <audio src="/cinnamon.mp3" autoPlay loop hidden />
+      <h1 style={{color: "#b35b7a", marginBottom: 22}}>Memory...</h1>
       <div style={{
         ...styles.book,
         animation: anim ? "flip 0.4s" : "none"
