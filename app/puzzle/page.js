@@ -45,15 +45,16 @@ export default function PuzzlePage() {
       zeroIdx % 3 !== 2 ? zeroIdx + 1 : -1
     ];
     if (canMove.includes(idx)) {
-      const newTiles = tiles.slice();
-      [newTiles[zeroIdx], newTiles[idx]] = [newTiles[idx], newTiles[zeroIdx]];
-      setTiles(newTiles);
-     if (isSolved(newTiles)) setSolved(true);
+  const newTiles = tiles.slice();
+  [newTiles[zeroIdx], newTiles[idx]] = [newTiles[idx], newTiles[zeroIdx]];
+  setTiles(newTiles);
 
-       // redirect lepas 1.5s
-        setTimeout(() => router.push("/maze"), 1500);
-    }
+  if (isSolved(newTiles)) {
+    setSolved(true);
+    // hanya redirect bila solved
+    setTimeout(() => router.push("/maze"), 1500);
   }
+}
 
   return (
     <main style={styles.bg}>
