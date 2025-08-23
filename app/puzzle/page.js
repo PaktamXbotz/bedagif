@@ -55,7 +55,7 @@ export default function PuzzlePage() {
     setTimeout(() => router.push("/maze"), 1500);
   }
 }
-
+  }
   return (
     <main style={styles.bg}>
       <h1 style={styles.title}>🌷 Sliding Puzzle: Tulips</h1>
