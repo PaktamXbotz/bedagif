@@ -5,12 +5,11 @@ const pages = [
   { left: "/muka1.jpg", right: "Happy Last Teen Shidaaaa! 🥳" },
   { left: "/muka2.jpg", right: "Grateful to have you in my life 💖" },
   { left: "/muka3.jpg", right: "With you, every moment feels special 🌹" },
-  // Tambah lagi page ikut suka!
 ];
 
 export default function Scrapbook() {
   const [page, setPage] = useState(0);
-  const [direction, setDirection] = useState(null); // left / right
+  const [direction, setDirection] = useState(null);
 
   function goNext() {
     setDirection("right");
@@ -64,11 +63,7 @@ export default function Scrapbook() {
       </div>
 
       <div style={{ marginTop: 18 }}>
-        <button
-          onClick={goPrev}
-          disabled={page === 0}
-          style={styles.pageBtn}
-        >
+        <button onClick={goPrev} disabled={page === 0} style={styles.pageBtn}>
           ⬅️
         </button>
         <span
@@ -88,6 +83,29 @@ export default function Scrapbook() {
           ➡️
         </button>
       </div>
+
+      {/* ✅ Button WA keluar bila dah habis page terakhir */}
+      {page === pages.length - 1 && (
+        <button
+          onClick={() =>
+            window.open("https://wa.me/60104498264?text=Kamuu%20Dah%20tknak%20chat%20saya%20ke%20Shidaaaa....", "_blank")
+          }
+          style={{
+            marginTop: 28,
+            background: "#25D366",
+            color: "white",
+            padding: "12px 20px",
+            border: "none",
+            borderRadius: 12,
+            fontSize: 18,
+            fontWeight: "bold",
+            cursor: "pointer",
+            boxShadow: "0 4px 12px #0003",
+          }}
+        >
+          💌 Byee
+        </button>
+      )}
 
       <style>
         {`
