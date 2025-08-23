@@ -91,7 +91,7 @@ export default function PuzzlePage() {
       {solved && (
         <div style={styles.winBox}>
           <img src="/success.gif" width={80} />
-          <p style={styles.success}>Tahniah! Puzzle siap 🌷</p>
+          <p style={styles.success}>Tahniah! Puzzle dh siapp kamuu🌷</p>
         </div>
       )}
     </main>
