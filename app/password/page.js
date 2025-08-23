@@ -71,7 +71,11 @@ export default function PasswordPage() {
             </svg>
           )}
         </div>
-        <h2 style={{color:"#b35b7a", margin: "16px 0 12px 0"}}>Masukkan PIN</h2>
+        <h2 style={{color:"#b35b7a", margin: "16px 0 8px 0"}}>Masukkan PIN</h2>
+        <p style={{color:"#777", fontSize:14, marginBottom:14}}>
+          Hint: My birthday 🗓️ (hari bulan tahun, ambil belakang je. 
+          Contoh: 2001 → 01)
+        </p>
         <div style={styles.pinRow}>
           {[...Array(PIN_LENGTH)].map((_, i) => (
             <span key={i} style={styles.pinDot}>
