@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 
 const pages = [
-  { left: "/muka1.jpg", right: "Happy Birthday! 🥳" },
-  { left: "/muka2.jpg", right: "Semoga sentiasa bahagia 💖" },
-  { left: "/muka3.jpg", right: "Terima kasih sebab sentiasa support & buat saya senyum 😘" },
+  { left: "/muka1.jpg", right: "Happy Last Teen Shidaaaa! 🥳" },
+  { left: "/muka2.jpg", right: "Grateful to have you in my life 💖" },
+  { left: "/muka3.jpg", right: "With you, every moment feels special 🌹" },
   // Tambah lagi page ikut suka!
 ];
 
