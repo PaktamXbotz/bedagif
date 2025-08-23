@@ -151,4 +151,4 @@ const styles = {
     fontWeight: "bold",
     marginTop: 8
   }
-};
+}
