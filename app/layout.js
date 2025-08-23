@@ -1,5 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+"use client"; // penting supaya kita boleh guna useRef/useEffect
+
+import { useRef, useEffect } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,9 +20,30 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      // Try play bila user dah interact
+      const playAudio = () => {
+        audioRef.current.play().catch(() => {});
+        document.removeEventListener("click", playAudio);
+      };
+      document.addEventListener("click", playAudio);
+    }
+  }, []);
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {/* Global Background Music */}
+        <audio
+          ref={audioRef}
+          src="/cinnamon.mp3"
+          preload="auto"
+          loop
+          hidden
+        />
         {children}
       </body>
     </html>
