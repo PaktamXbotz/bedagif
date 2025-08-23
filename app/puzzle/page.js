@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 
 const PUZZLE_SIZE = 3;
 const IMAGE_SIZE = 300;
@@ -22,6 +24,8 @@ function isSolved(tiles) {
 export default function PuzzlePage() {
   const [tiles, setTiles] = useState([]);
   const [solved, setSolved] = useState(false);
+    const router = useRouter();
+
 
   // Setup puzzle
   useEffect(() => {
@@ -44,7 +48,10 @@ export default function PuzzlePage() {
       const newTiles = tiles.slice();
       [newTiles[zeroIdx], newTiles[idx]] = [newTiles[idx], newTiles[zeroIdx]];
       setTiles(newTiles);
-      if (isSolved(newTiles)) setSolved(true);
+     if (isSolved(newTiles)) setSolved(true);
+
+       // redirect lepas 1.5s
+        setTimeout(() => router.push("/maze"), 1500);
     }
   }
 
