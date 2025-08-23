@@ -68,8 +68,8 @@ export default function MazePage() {
 
   return (
     <main style={styles.bg}>
-      <h1 style={styles.title}>🏠 Maze Challenge</h1>
-      <p style={styles.text}>Cari jalan ke rumah! (guna arrow key atau butang bawah)</p>
+      <h1 style={styles.title}>🏠 Maze Challenge!!!</h1>
+      <p style={styles.text}>Cari jalan ke rumah! (guna arrow key atau button pad)</p>
       <div style={styles.maze}>
         {initialMaze.map((row, rowIdx) =>
           row.map((cell, colIdx) => {
