@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import BackgroundMusic from "./music"; // import component client
+import BackgroundMusic from "./music";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +21,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {/* Music player akan jalan kat semua page */}
         <BackgroundMusic />
         {children}
       </body>
