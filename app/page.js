@@ -23,7 +23,7 @@ export default function Home() {
         hidden
       />
       <h1 style={styles.title}>🎀 Happy Birthday Kamuu! 🎂</h1>
-      <p style={styles.text}>Semoga panjang umur, murah rezeki & may all your dreams come true ✨ Always stay my sweet Shida 💕</p>
+      <p style={styles.text}>Semoga panjang umur, murah rezeki & may all your dreams come true💕</p>
       <img src="/cakecute.gif" alt="Birthday Cake" width="200" />
       <br />
       <a href="/password" onClick={handlePlayAudio}>
